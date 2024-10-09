@@ -1,0 +1,2272 @@
+1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                          RNF
++                                         ___
+
+                                    Text Processor
++                                   ____ _________
+
+
+                                    Reference Guide
+1
+
+
+        Introduction               RNF                                  1
+
+
+
+
+
+
+
+                                       CHAPTER 1
+
+                                     INTRODUCTION
+
+
+
+
+        RNF is a text formatting program for the Cyber similiar  to  the  RUNOFF
+        program available on the DECsystem-10.
+
+        RNF accepts (mostly) free-format text which has been put in a  file  and
+        edited  by  BOSS,  and  produces output suitable for a line printer or a
+        typewriter-like terminal device.
+
+
+
+        1.1  Features
+
+
+        RNF does any or all of the following for the user:
+
+         Pagination      RNF automatically breaks text up  into  pages,  and  by
+                         default numbers them sequentially.
+
+         Fill            Using the margins set by the  user,  RNF  automatically
+                         "fills"  each  line of the output with as many words as
+                         it  can  hold  without  exceeding  the  right   margin.
+                         Filling stops at the end of a paragraph, etc.
+
+         Justification   RNF will optionally justify filled lines on the  right,
+                         so that the right margin "lines up" evenly.
+
+         Chaptering      RNF will format chapter  titles,  and  number  chapters
+                         sequentially.
+
+         Sectioning      RNF will format section headers and number sections and
+                         subsections sequentially.
+
+         Lists           RNF will format and number lists and sublists.
+
+        In addition to the features which are built in, RNF provides an easy  to
+        use  macro  facility which permits the user to define commands which are
+        customized to a particular application.
+1
+
+
+        2                          RNF                       Introduction
+
+
+        1.2  Input Text
+
+
+        The input to RNF may be prepared either on an  upper  case  only  device
+        like  a  Teletype  or punched cards, or on an upper/lower case terminal.
+        These are called NORMAL and ASCII devices, respectively.
+
+        Regardless of the input medium, output from RNF is in upper/lower  case.
+        This is accomplished by the following conventions:
+
+
+
+        1.2.1  NORMAL Input
+
+
+        By convention, RNF inverts the case  of  alphabetic  characters  in  the
+        input.   Upper  case  characters  are  indicated  by a preceding ^.  For
+        example, the following NORMAL input
+
+         ^THIS IS AN ^U^P^P^E^R/LOWER CASE LINE.
+
+        is output by RNF as
+
+         This is an UPPER/lower case line.
+
+        As a convenience, the < character will invert the case of all alphabetic
+        characters which follow it in the same word.  For example,
+
+         ^SOME <UPPER <CASE AND SOME LOWER CASE.
+
+         SOME<OF<BOTH
+
+        are output as
+
+         Some UPPER CASE and some lower case.
+
+         someOFboth
+
+        In exchange for this  convenience,  the  characters  ^  and  @  must  be
+        represented in NORMAL input as @B and @A, respectively.
+
+
+
+        1.2.2  ASCII Input
+
+
+        Upper/lower case text can be entered in a file by using  ASCII  mode  in
+        BOSS.   When  submitted  to RNF, this text must be preceded by an .ASCII
+        command.  The < character works the same.
+1
+
+
+        Introduction               RNF                                  3
+
+
+        1.3  WORDS
+
+
+        RNF input is a series  of  words,  where  a  word  is  any  sequence  of
+        non-blank characters.
+
+        Blanks in the input text are not (usually) significant  to  RNF,  except
+        that  they  delimit words.  RNF inserts one blank between each word, and
+        two blanks after words which end sentences.
+
+        If a sequence of blanks must appear in the output, the significant blank
+        character # is used.  For example, be####tween is output as be    tween.
+
+
+
+        1.4  LINES
+
+
+        In default mode, words are picked from the input one by one  and  placed
+        into  an  output  line.  When an output line is full, it is written into
+        the output file.
+
+        The user sets the left and right margins of the output page by  the  .LM
+        and  .RM  commands,  respectively.   Text  on the output line is written
+        beginning at the left margin and not past the right margin.
+
+        Filling means that (unless the user specifically directs  otherwise)  as
+        many words as possible are used to fill each output line.
+
+        Justification means that blank characters are  added  between  words  so
+        that the last character on each line is exactly on the right margin.
+
+        The .F and .J commands control filling and justification.
+
+        The default left margin is 1 and the default right margin  is  72.   For
+        Elite  type  (12  characters per inch) this produces a 6-inch wide line,
+        which allows 1 and 1/4 inch margins on standard 8 and  1/2  inch  paper.
+        For Pica type (10 characters per inch) .LM 1 and .RM 60 provide the same
+        size line.
+
+        For most purposes, it is recommended that the left margin  be  initially
+        set  to  1, as this is easy to work with and remember.  If the text must
+        be shifted to the right for output on  a  typewriter  page,  the  .RIGHT
+        command may be used.
+1
+
+
+        4                          RNF                       Introduction
+
+
+        1.5  SPACING
+
+
+        The input to RNF is single spaced.  The output  may  be  single  spaced,
+        double spaced, or triple spaced as the user chooses.
+
+        Spacing is set by the .SP command,.  Once set,  RNF  will  automatically
+        control  spacing without requiring any further action on the part of the
+        user.  If extra spaces or non-standard spacing is desired, however,  RNF
+        provides commands for these, too.
+
+        The .CR command provides the equivalent of a carriage return key  on  an
+        electric typewriter.  The .CR ends the current line and spaces as set by
+        .SP.  That is, if single spacing is selected (.SP 1), the  .CR  "returns
+        the  carriage"  to the next line; if double spacing is selected (.SP 2),
+        the .CR leaves a single blank line after the current line,  and  so  on.
+        Throughout  this  manual,  the  action  of  the  .CR is referred to as a
+        "return".  Many commands cause a return as a prelude to further action.
+
+        The .S command causes a return, followed by any number of extra returns.
+        .S  and  .S 1  mean the same, i.e., a return and one extra return.  .S 2
+        provides two extra returns, and so on.
+
+        .CR and .S always honor the spacing set by .SP.   The  user  can  escape
+        spacing by means of the .BR and .B commands.
+
+        .BR provides a "break"; it returns the carriage and proceeds on the next
+        line,  regardless of spacing.  .B causes any number of blank lines after
+        the current line.  .B and .B 1 mean the same: break and leave one  blank
+        line after the current line.  .B 2 leaves two blank lines, and so on.
+
+        Thus, the user can create spacing independent text by using only .CR and
+        .S  commands  for  spacing.   .BR  and .B are used when spacing is to be
+        fixed regardless of the .SP setting.
+
+
+
+        1.6  PARAGRAPHS
+
+
+        RNF provides both explicit and automatic paragraphing  facilities.   The
+        .P  command  controls  the  indentation,  spacing,  and location of each
+        paragraph.  The .PP command begins a new paragraph.
+
+        Autoparagraphing, controlled by the .AP command, causes an implicit  .PP
+        command  each time either a blank line or a line beginning with blank is
+        encountered in the input text.  This is a  convenient  format  for  text
+        entry, and allows easy modification.  By use of the .SP (SPacing) and .P
+        commands, the same input text can be used for producing both double  (or
+        triple) spaced drafts and single spaced final copy.
+
+1
+
+
+        Introduction               RNF                                  5
+
+
+        Paragraphing is sufficiently flexible to be used for "hanging  indents".
+        In  addition,  the  fact  that  paragraph  indentation  can be specified
+        relative to the left  margin  (even  if  it  is  later  changed)  allows
+        paragraphing to be conveniently used in indented text.
+
+
+
+        1.7  PAGES
+
+
+        Lines are automatically separated  into  pages  by  RNF.   Two  commands
+        control the size of RNF pages: .PS (Page Size) and .LINES.
+
+        The first argument of .PS  specifies  the  number  of  lines  which  are
+        allowed  on  a page before an automatic page throw is done.  This number
+        includes the lines in the header at the top of each page, and the normal
+        text  on the page, but does not include the lines in the footer (if any)
+        at the bottom of the page.  The .LINES command specifies the  number  of
+        lines  on  the  entire  page.   This number is used when simulating page
+        ejects on terminals with continuous forms.
+
+        The default .PS first argument and .LINES are 58 and  66,  respectively.
+        This allows at least a 1 and 1/3 inch bottom margin with 6 line per inch
+        printing, and a 1 inch margin with line per inch  printing  on  standard
+        CSO reduced forms.
+
+        Some terminals use reduced forms but print 6 lines per inch.  This means
+        there are 51 lines on each page; a .PS first argument of 44 will allow a
+        1 inch bottom margin.
+
+
+
+        1.7.1  Explicit paging control
+
+
+        The  .PAGE  command  allows  the  user  to  advance  to  the  next  page
+        explicitly.   The .NMP and .PNO commands control page numbering, and the
+        .TITLE, .ST, and .ATITLE commands provide for printing titles at the top
+        of each page.
+
+
+
+        1.7.2  Page Format
+
+
+        A page is divided into three areas:
+
+           . The top, which contains the upper margin and  optional  titles  and
+             page number.
+
+1
+
+
+        6                          RNF                       Introduction
+
+
+           . The middle, which contains the text of the document.
+
+           . The bottom, which may contain a footer.  (By default, no footer  is
+             printed.)
+
+
+        The default header consists of an optional title on  the  left  and  the
+        page  number  as an Arabic number on the right of the fourth line on the
+        page.  The subtitle, if any, is below the title on the  following  line.
+        Two blank lines are left below the header.
+
+        If this default format is not satisfactory for a specific document,  the
+        user  may  substitute any arbitrary header and footer text by means of a
+        .FRCPAGE macro  definition  (see  Chapter  3)  and  use  of  the  paging
+        intrinsics .TOP, .MID, and .BOT.
+
+        The page number used  by  RNF  may  be  accessed  directly  through  the
+        predefined variable $$PAGE (see Chapter 4).
+1
+
+
+        Commands                   RNF                                  7
+
+
+
+
+
+
+
+                                       CHAPTER 2
+
+                                       COMMANDS
+
+
+
+
+        Any sequence of non-blank characters beginning with a  period  (.)   are
+        taken  by  RNF  to  be  a command.  If the command is not recognized, an
+        error message is produced.
+
+        Many commands require arguments, i.e., words which  follow  the  command
+        and  modify  its  action  in some way.  The only commands which permit a
+        variable number of arguments are .TAB (or .TABS), .B, and  .S.   if  any
+        other command requires an argument, it must be specified.
+
+        Commands may be freely interspersed with text.  Some  commands  cause  a
+        "return"  (that  is, act as if they were preceded by a .CR command) as a
+        part of their action.  If a command causes a return, this  is  indicated
+        in parenthesis after the command format.  Other commands cause a "break"
+        (that is, act as if they were preceded by a .BR command) as  a  part  of
+        their action.  These are indicated by (Break) in parenthesis.
+
+        Note that a blank must follow a command if there is  more  text  on  the
+        same  line.   For example, the sequence ".B.I 5" is in error; it must be
+        written as ".B .I 5".
+
+
+     .AP
+
+         Any  blank  line  or any line beginning with a blank character begins a
+         new  paragraph.   See  the  .P  and  the  .PP  commands.   .NOAP  turns
+         autoparagraphing off and is the default.
+
+
+     .ARRAY variablename n
+
+         This command declares an array variable with the name specified and n+1
+         elements.  An element of the array is later accessed or  changed  by  a
+         reference of the form:
+
+         variablename[expression]
+
+         where  expression may be in the range 0 through n.  The zeroeth element
+         of the array may be  referred  to  without  a  [0]  subscript,  and  is
+         commonly used as an index into the remainder of the array.
+
+1
+
+
+        8                          RNF                           Commands
+
+
+         All array elements have the initial value zero.  Array  names  must  be
+         formed as defined for the .VAR command.
+
+
+     .ASCII
+
+         The  input  was prepared in ASCII mode on an upper/lower case terminal.
+         When in ASCII mode cahracters  are  not  automatically  case  inverted.
+         Also  the effect of the ^ character is reversed, in ASCII mode ^ lowers
+         a capital letter and does nothing to a lower case letter.  The  default
+         is .NOASCII.
+
+
+     .ASIS                                                       (Return)
+
+         Terminates  the current input line and enters as is mode beginning with
+         the next input line.
+
+         In  as  is  mode, input lines are copied directly to the output (except
+         that the left  margin,  change  bars,  and  .RIGHT  spacing  are  still
+         honored).
+
+         As is mode is terminated by a line with an  exclamation  mark  (!)   in
+         column  1.   All characters after the exclamation mark are ignored, and
+         normal processing begins with the following line.
+
+         Note that as is text which is intended to be output as upper/lower case
+         (ASCII) must be input in ASCII.  No processing is done on as is text.
++                                         __
+
+
+     .ATITLE
+
+         Enables autotitling, which makes each new chapter heading the title for
+         all but the first page of the chapter.  The default is .NOATITLE.
+
+
+     .AUTOCAP
+
+         Enables  the auto capitalization, which makes the character following a
+         ., !, ?, remain in upper case.  This is disabled  in  ASCII  mode.   It
+         takes  effect  after  the  first punctuation mark, so it may not affect
+         titles or the first line.  NOAUTOCAP is the default.
+
+
+     .B                                                           (Break)
+     .B n                                                         (Break)
+
+         Ends the  current  line  and  writes  it  without  further  filling  or
+         justification (causes a break), then writes n blank lines.  .B and .B 1
+         are equivalent.
+
+
+1
+
+
+        Commands                   RNF                                  9
+
+
+     .BAR
+
+         Enables  change  bars.   All text following the .BAR command is shifted
+         right three spaces.  See the .BB and  .EB  commands.   The  default  is
+         .NOBAR.
+
+
+     .BB
+
+         Begin  placing change bars (vertical bars) in the margin created by the
+         .BAR command beginning with the line which contains the first  word  in
+         the text following the .BB command.  See the .EB command.
+
+
+     .BOT
+
+         Sets  the  beginning  of  user text (on the page) to the current output
+         line number and restores any output lines which might have  been  saved
+         on a forced page eject (see .FRCPAGE).  If any deferred text is pending
+         (see the .FIG command), as much of it as possible is  output  by  .BOT.
+         If  as  is  mode  was in effect at the time of the last .FRCPAGE, it is
+         restored.
+
+         The  .BOT command is to be used only when overriding the default header
+         format via macros.
+
+         The  .B and .S commands have no effect at the beginning of user text on
+         a page.  This prevents spurious blank lines at the top of a text page.
+
+
+     .BR                                                          (Break)
+
+         Ends  the current outtput line and writes it without further filling or
+         justification.  No extra blank lines are left  by  .BR,  regardless  of
+         spacing.
+
+
+     .C text                                                     (Return)
+
+         Centers  the  text  which  follows  the  .C  command  on the same line.
+         Centering is between the current left and right margins.
+
+
+     .CH title                                                   (Return)
+
+         Begins  a new chapter with the title which follows on the same line.  A
+         new page is begin, titles and subtitles are cleared, a .FIG 12 is done,
+         followed  by  the  word  CHAPTER  centered, a .B, followed by the title
+         centered.  Page numbering is not  affected.   If  .ATITLE  is  on,  the
+         chapter title is set as the .TITLE for succeeding pages.
+
+
+1
+
+
+        10                         RNF                           Commands
+
+
+     .CR                                                         (Return)
+
+         Causes  a carriage return, which is a .BR followed by spacing minus one
+         blank lines.
+
+         Note  that  .CR  is  implied  before  any command for which (Return) is
+         indicated.
+
+
+     .DEBUG1
+
+         Causes all following lines to be prefixed with the relative line number
+         of the page.  This precedes the carriage control, if any.  .DEBUG1 also
+         includes  .DEBUG2.   .NODEBUG1  is  the  default.   This  is useful for
+         finding problems when creating a document with many page ejects.
+
+
+     .DEBUG2
+
+         Causes  all  following  lines to be trailed by the input line number on
+         the extreme right margin (not necesarily the margin set by .RM).   This
+         is  very useful for document preparation, to correlate a problem to the
+         input line causing it.  .NODEBUG2 is the default.
+
+
+     .DEC variablename
+
+         Decrement the variablename.
+
+
+     .DELMAC macroname
+
+         Deletes the macro name, so that it may be reused.
+
+
+     .DOT
+
+         Causes  all  following  .T  or .RT commands to fill with dots (periods)
+         instead of spaces.  A blank is always left before and after the  string
+         of dots.  .NODOTS returns to filling tabs with spaces.
+
+
+     .EB
+
+         End  change  bars.  The last line flagged is the one which contains the
+         word just preceding the .EB command.
+
+
+     .ELIST
+
+         End  list.   Terminates  the  innermost  active  list.   See  the .LIST
+         command.
+1
+
+
+        Commands                   RNF                                 11
+
+
+     .ESC
+
+         Enables the escape character _ (backarrow or underline).  When enabled,
+         the escape character causes the character which follows it to be copied
+         to  the  output text without special action.  For example, 23_.  causes
+         23. to be typed without an extra trailing blank.  The default is .ESC.
+
+
+     .F
+
+         Fills  each  output  line with as many words from the input as possible
+         without exceeding the right margin.  Blanks are removed from the input.
+         Each  word of the output is followed by at least one blank, while words
+         which end in ., !, or ? are followed by  at  least  two  blanks.   .NOF
+         suppresses fill.
+
+
+     .FIG n
+
+         Reserves  n  lines  for a figure.  If the lines will fit on the current
+         page, .FIG causes a return and leaves n blank lines.  If not,  n  blank
+         lines are left at the beginning of the next page.
+
+
+     .FLAG
+
+         Causes  ^  and  @  to  be  recognized as flag characters.  .FLAG is the
+         default; .NOFLAG suppresses recognition.
+
+
+     .FLAGCAPS
+
+         Causes  the  <  character  to  invert the case of any letters in a word
+         which  follow  it.   For  example,  <UP<AND<THEN<DOWN  is   output   as
+         UPandTHENdown.   .NOFLAG suppresses special action for the < character.
+         .FLAG is the default.
+
+
+     .FLAGOVER
+
+         The  .FLAGOVER  command  enables  recognition  of  \ (backslash) as the
+         strikeover character.  The strikeover character is written between  the
+         character to be overstruck and the character which is to overstrike it.
+         For example, STRIKEO\/VER is output as STRIKEOVER.
++                                                     /
+
+         Underlining  counts as one overstrike.  Any character may be overstruck
+         up to three times.  Overstriking may be used only within  a  word;  the
+         overstrike character has no meaning by itself or beginning a word.
+
+         .FLAGOVER is the default.  .NOFLAGOVER turns it off.
+
+
+1
+
+
+        12                         RNF                           Commands
+
+
+     .FLAGSIG
+
+         The   .FLAGSIG   command  enables  recognition  of  #  (sharp)  as  the
+         significant blank character.   .FLAGSIG  is  the  default.   .NOFLAGSIG
+         turns it off.
+
+
+     .FRCPAGE
+
+         This command is used internally by RNF to force a page eject.  That is,
+         if a line is about to be written which would exceed the page size,  the
+         line is saved, and a .FRCPAGE command is executed as though it had been
+         encountered in the input text.
+
+
+
+         The .FRCPAGE command itself invokes the equivalent of .TOP, prints  the
+         next page header, and invokes the equivalent of .MID.
+
+         The user may add a footer or reformat the page  header  by  defining  a
+         macro  with the name .FRCPAGE.  This replaces the .FRCPAGE command, and
+         must invoke the  .TOP  and  .MID  commands  (and  optionally  the  .BOT
+         command)  explicitly.   For  correct  operation,  the first word in the
++                                                              _____
+         .FRCPAGE macro must be either .BOT or .TOP, and the last word should be
+         .MID.
+
+         Note that .FRCPAGE does not return, nor can  it,  since  a  return  can
+         cause  a  page  eject,  which  will  cause  a  .FRCPAGE  to  be invoked
+         recursively.  The .PAGE command does return, and in fact is defined  as
+         .BR .FRCPAGE.
+
+
+     .FMT n1 n2
+
+         Formats  the  value of n2 according to the format code specified by n1.
+         N1 and n2 may be expressions (see Chapter 4).  N1 must be in the  range
+         0 through 5, and has a meaning as follows:
+
+         Value      Formats n2 as...
++        _____      ________________
+
+             0      Arabic numbers.  That is, .FMT 0 is a no-op except  that  it
+                    forces output of n2.
+
+             1      Upper case alphabetic characters, where  n2=1  produces  the
+                    character  A, n2=2 produces B, etc.  (Note that in fact n2=n
+                    produces the nth character in the alphabet, where n is taken
+                    modulo 26.)
+
+1
+
+
+        Commands                   RNF                                 13
+
+
+             2      Lower case alphabetic characters, where  n2=1  produces  the
+                    character a, etc.  (The action is the same as that of format
+                    except that the character is lower case.)
+
+             3      Upper case Roman numerals.  (The numerals produced only make
+                    use of the characters M, D, C, L, X, V, and I.)
+
+             4      Lower case Roman numerals.  (The numerals produced only make
+                    use of the characters m, d, c, l, x, v, and i.)
+
+             5      The N2th character of the character set.  This is useful for
+                    printing characters not available on the entry device.
+
+
+     .HL n heading                                               (Return)
+
+         Begins  a  new  section  with  the  heading specified and automatically
+         numbers it.  The n in the .HL command must be in the range 1 through 5.
+         Section  numbers  have  the form i.j.k.l.m.  If a .CH command preceeded
+         the .HL command, i is the chapter number; otherwise it is the number of
+         .HL  1  commands.   Within Chapter 2, the sequence .HL 1, .HL 2, .HL 3,
+         .HL 3, .HL 2, .HL 1 produces sections  numbered  2.1,  2.1.1,  2.1.1.1,
+         2.1.1.2, 2.1.2, and 2.2.
+
+         Three blank lines are left before each section,  and  two  blank  lines
+         follow the section header.
+
+
+     .I  n                                                       (Return)
+     .I +n                                                       (Return)
+     .I -n                                                       (Return)
+
+         Indent  the following line.  If n is specIfied, it indicates the column
+         number at which the line is to begin.  If +n or -n are  specified,  the
+         indent is plus or minus n characters from the left margin.
+
+
+     .IF expression text
+
+         The  .IF command tests the value of the expression.  If it is zero, the
+         text on the remainder of the line is skipped;  otherwise  the  text  is
+         scanned normally.  .IF provides a single line conditional capability.
+
+         For a definition of expressions  acceptable  to  .IF,  see  Chapter  4,
+         VARIABLES.
+
+
+     .INC variablename
+
+         increment the following variable.
+
+
+1
+
+
+        14                         RNF                           Commands
+
+
+     .J
+
+         Justify  text at the right margin.  This is the default.  Justification
+         is accomplished by inserting extra blanks between words when necessary.
+         (Note  that  a significant blank, the # character, is never expanded.)
+         .NOJ turns justification off.
+
+
+     .LE                                                         (Return)
+
+         Begins  a  list  element.   The  element  is automatically numbered and
+         indented.  See the .LIST and .ELIST commands.
+
+
+     .LINES n
+
+         Sets  the  number  of  lines  in the output page, including the top and
+         bottom margins.  DEFAULT n is 66.  The correct setting for 6  line  per
+         inch devices using 8 line per inch paper (like CSO'S DECwriters) is 51.
+
+
+     .LIST n                                                     (Return)
+
+         Begins   a   list  with  n  spacing.   Each  element  of  the  list  is
+         automatically numbered beginning at 1.   Lists  may  be  nested  within
+         lists,  for  up to 5 levels.  A list is terminated by a .ELIST command.
+         Each list is indented on the right; the outermost list  is  indented  9
+         characters, and each inner list is indented 4 more.
+
+
+     .LOWER
+
+         Formats the output in upper/lower case.  Lower is the default.
+
+
+     .LPT
+
+         Prepare  output  for a line printer, with carriage control in the first
+         character position of each line.  The default is .LPT.  .NOLPT prepares
+         output for an interactive terminal.
+
+
+     .LM n
+
+         Set  the  left  margin  to n.  N must be in the range 1 through 136 (in
+         particular, .LM 0 is flagged as an error).  See .RM also.
+
+
+     .MACRO name   = text
+     .MACRO name n = text
+     .MACRO name * = text
+
+1
+
+
+        Commands                   RNF                                 15
+
+
+         Defines  a  macro  with  the  name  specified  equal to the text on the
+         remainder of the same line.  When .name is encountered later, the  text
+         is substituted for it.
+
+         If n, an integer from 1 to 7, is specified, it indicates the macro  has
+         n arguments.  This implicitly defines macros name1,name2...namen, which
+         have a text value equal to the n words which follow the macro  when  it
+         is invoked.
+
+         If * is specified, it indicates that the macro has one  argument.   The
+         argument  is  the  implicitly defined macro name1, and has a text value
+         equal to the entire rest of the line on which the macro is invoked.
+
+         For an extended discussion and examples, see Chapter 3, MACROS.
+
+
+     .MID                                                        (Return)
+
+         The  .MID command ends a user-defined .FRCPAGE macro.  .MID outputs any
+         deferred text, followed by any lines saved prior to .FRCPAGE, then sets
+         the beginning of user text to the current line.  This latter suppresses
+         blank lines at the "top of the page" caused by either .S or .B.
+
+
+     .NMP
+
+         Number pages.  This is the default; .NONMP turns it off.
+
+
+     .P  n s t
+     .P +n s t
+     .P -n s t
+
+         Sets  paragraphing  conventions.   N,  s and t are numbers.  N sets the
+         paragraph indent and works like the .I command.   S  sets  the  spacing
+         between paragraphs, where 1 is single spaced, is double spaced, etc.  T
+         sets an automatic .TP t before each paragraph.  See also  the  .PP  and
+         .AP commands.
+
+
+     .PAGE                                                       (Return)
+
+         Begins a new page.
+
+
+     .PERIOD
+
+         Leave an extra blank after ., !, or ?.  This is the default.  It may be
+         suppressed by .NOPERIOD.
+
+
+1
+
+
+        16                         RNF                           Commands
+
+
+     .PNO n
+
+         Number the next page n.
+
+
+     .PP                                                         (Return)
+
+         Begin a new paragraph.
+
+
+     .PS l r
+
+         Sets  the  page  size to l lines of text, not counting the lines at the
+         top margin, and the page number right margin to r.  See also the .LINES
+         command.
+
+
+     .REM text
+
+         The  .REM  command and all text which follows it on the same input line
+         is treated as a remark (comment).   The  text  is  not  copied  to  the
+         output.
+
+
+     .RES                                                         (Break)
+
+         Restores  the  margins,  fill  and  justify  modes, paragraph settings,
+         spacing, and tab stops to their state as of the last .SAV command.
+
+
+     .RESPAG                                                     (Return)
+
+         Like  .RES;  replaces  the  margins,  fill and justify modes, paragraph
+         settings, spacing, and tab stops to their state as of the last  .SAVPAG
+         command.   Restores the page environment, which is used to align titles
+         and page numbers.
+
+
+     .RIGHT n                                                    (Return)
+
+         Shift  output  text  right  n  spaces.  the .RIGHT spaces precede those
+         caused by the .BAR command.
+
+
+     .RM n
+
+         Sets the right margin to column n.
+
+
+1
+
+
+        Commands                   RNF                                 17
+
+
+     .RT
+
+         Right  tab.   Causes  the following word to be right justified (end in)
+         the next tab stop.  See the .TABS and .T commands.  This is useful  for
+         tables of numeric data.
+
+
+     .S                                                          (Return)
+     .S n                                                        (Return)
+
+         Leave n+1 times spacing blank lines, where spacing is set  by  the  .SP
+         command.   .S does nothing at the beginning of a page.  .S and .S 1 are
+         equivalent.
+
+
+     .SAV
+
+         Save  the  current margins, fill and justify modes, paragraph settings,
+         spacing,  and  tab  stops  --  which  are   collectively   called   the
+         "environment".   The environment is restored by the .RES command.  .SAV
+         and .RES can be nested.
+
+         For most text, there are two active environments: the current value and
+         the "page environment".  The latter controls the printing of titles and
+         page numbers at the head of each page.
+
+         Note that .HL, .CH, or  .RESPAG  reset  the  environment  to  the  page
+         environment  and discard any active .SAVs.  See the .SAVPAG and .RESPAG
+         commands.
+
+
+     .SAVPAG
+
+         Like  .SAV,  except  .SAVPAG  replaces  the  page  environment.   If no
+         explicit .SAVPAG is done, the environment  at  the  first  .HL  or  .CH
+         command becomes the page environment.
+
+
+     .SIG
+
+         Treat  successive  blank  characters  as  words, and stop all automatic
+         blank placement.  Used in conjunction with .NOJ and .NOF, it permits  a
+         sort  of  "as  is"  mode  in  which,  however,  commands  and flags are
+         recognized.  .NOSIG is the default.
+
+
+     .SP n
+
+         Set  the  spacing  between  lines  forced out by filling to n, where is
+         single spacing, 2 is double spacing, etc.
+
+
+1
+
+
+        18                         RNF                           Commands
+
+
+     .ST text                                                    (Return)
+
+         The  text  which  follows the .ST command on the same line is used as a
+         subtitle on the next and succeeding pages.
+
+
+     .STD
+
+         Sets  .F,  .FLAG,  .FLAGCAPS, .NOASCII, .ESC, .PERIOD, .J, .UL, .NOSIG,
+         and automatic returns before the .C,  .TITLE,  .ST,  and  .I  commands.
+         .SIG is the default; .NOSIG does the opposite.
+
+
+     .SUP
+
+         Suppresses  (throws  away) any text already in the current output line,
+         and any text on the same input line as the .SUP command.
+
+
+     .T
+
+         Begin  the  next word at the next tab stop.  See also the .TABS and .RT
+         commands.
+
+
+     .TABS t1 t2 ...  t15
+
+         Set  up  to 15 tab stops in columns t1, t2, etc.  The tab stops must be
+         in ascending order.  Tabbing is done by the .T and .RT commands.
+
+
+     .TITLE text                                                 (Return)
+
+         Sets the text which follows .TITLE on the same line as the title on the
+         next and succeeding pages.
+
+
+     .TOP
+
+         Spaces  to the top of the next page or emits "1" carriage control.  and
+         resets the line counter.
+
+         .TOP is only to be used when overriding the default page handling.  The
+         .PAGE command is used for ejecting a page normally.
+
+
+     .TP n                                                       (Return)
+
+         Tests whether n lines remain on the current page.  If not, .TP ejects a
+         page.  Note that .TP is affected by spacing in that the  actual  number
+         of lines tested for is n times spacing minus one.
+
+1
+
+
+        Commands                   RNF                                 19
+
+
+     .U
+
+         Underline the next and succeeding words in the output text.  Terminated
+         by the .NOU command.
+
+
+     .UPP
+
+         Force the next word to be upper case.
+
+
+     .UPPER
+
+         Forces the output into upper case only.  Lower is the default.
+
+
+     .USB
+
+         Underline  significant blanks (that is #) when .U is effective.  .NOUSB
+         causes significant blanks to be not underlined.  .USB is the default.
+
+
+     .VAR variablename
+
+         Declares a variable with the name specified.  Variable names must begin
+         with a $, and otherwise consist of letters, numbers, or  $  characters.
+         The  second  character  of  a  variable  name  may not be a digit.  The
+         variable has the initial value zero.
+
+
+     .X
+
+         Extend  the  preceding word on the output line with the following word.
+         Words joined by .X are output on the same line with no  blanks  between
+         them.   .X is primarily useful for joining text generated by a macro to
+         punctuation on either side of it.
+1
+
+
+        20                         RNF                             Macros
+
+
+
+
+
+
+
+                                       CHAPTER 3
+
+                                        MACROS
+
+
+
+        User-defined RNF macros provide a means of:
+
+           . Extending the set of RNF commands by adding macros  tailored  to  a
+             specific application.
+
+           . Abbreviating commonly used series of RNF commands.
+
+           . Abbreviating commonly used phrases or long words.
+
+        For  example,  the  following macro definitions were used to produce the
+        dotted list above:
+
+                 .MACRO BDOT = .SAV .P -2 1 5 .LM +5
+                 .MACRO DOT = .PP _.# .X
+                 .MACRO EDOT = .RES .S 1
+
+        while the following two macros  were  used  to  format  the  above  (and
+        following) examples:
+
+                 .MACRO EX = .SAV .LM +9 .NOF .NOJ .S 1
+                 .MACRO EEX = .RES .S 1
+
+        and so on!
+
+        The following discussion is intended to give the user some insight  into
+        potential  uses  of  macros  while  demonstrating how easy macros are to
+        define and use.
+
+
+
+        3.1  WHAT MACROS ARE
+
+
+        Macros have two parts: a name, and some text.  The name is a single word
+        long, while the text may be zero or more words long.
+
+        The effect of a macro is similiarly easy to describe: wherever the  name
+        of the macro appears RNF removes it and substitutes the text.
+
+1
+
+
+        Macros                     RNF                                 21
+
+
+        For example, if the following macro is defined:
+
+                 .MACRO CDC = Control Data Corporation
+
+        whenever .CDC appears in the  input,  RNF  removes  it  and  substitutes
+        Control Data Corporation.
+
+
+                                     Note the Dots
+
+                       The   macro  name  is  defined  without  a
+                       preceding  period  (dot).   But  when  the
+                       macro  is  used, the name must be preceded
+                       by a dot.
+
+
+
+
+
+        3.2  HOW TO DEFINE A MACRO
+
+
+        The simplest form of macro definition is:
+
+                 .MACRO name = text
+
+        where name is the name of the macro, and text represents all the text on
+        the rest of the same line.
+
+        After the macro definition, wherever .name appears RNF  removes  it  and
+        substitutes the text.
+
+
+
+        3.3  SUB-MACROS
+
+
+        All macro expansions are considered to take place on the same input line
+        as  the  "outermost" macro call.  Thus, macros can be parameterized in a
+        simple way by ending a macro expansion with a  command  and  typing  the
+        command argument(s) after the macro call.  For example,
+
+                 .MACRO RIGHTMARG = .RM
+
+        which could be used by
+
+                 .RIGHTMARG 65
+
+        But,  as  the  example shows, this approach is mostly limited to trivial
+        command replacements.  Sub-macros provide the  ability  to  parameterize
+        macros in a more useful fashion.
+1
+
+
+        22                         RNF                             Macros
+
+
+        3.3.1  Defining Parameterized Macros
+
+
+        Macros with sub-macros are defined by the formats:
+
+                 .MACRO name n = text
+                 -or-
+                 .MACRO name * = text
+
+        The n in the format stands for a number in the range 1  through  7.   It
+        means  that  the  1 through 7 words following the macro call on the same
+        line are dynamically made the values of the sub-macros name1, name2, ...
+        ,name7.
+
+        Sub-macros have a defined value only when the macro is being expanded.
+
+        If an asterisk is used instead of a number n,  it  means  that  all  the
+        words  which follow the macro call on the same line are dynamically made
+        the value of the sub-macro name1.
+
+        For example,
+
+                 .MACRO Z 2 = I hope you are .Z1 .X ing .Z2 .X !
+
+        When .Z is called, the sub-macros .Z1 and .Z2 are given values equal  to
+        the two words which follow .Z on the same line.  Thus, the call
+
+                 .Z follow me
+
+        produces the text
+
+                 I hope you are following me!
+
+
+
+
+        3.3.2  Sub-macro Semantics
+
+        Since the parameters of a macro are defined as macros  themselves,  they
+        may  be  used  in any macro called while the sub-macros are defined, and
+        need not be "passed down" from macro to macro.
+
+        If no words or not  enough  words  follow  the  call  of  a  macro  with
+        sub-macros, the sub-macros are given null values.  That is, unless there
+        is actually a word corresponding to a sub-macro, it expands  to  nothing
+        at all.
+1
+
+
+        Variables                  RNF                                 23
+
+
+
+
+
+
+
+                                       CHAPTER 4
+
+                                       VARIABLES
+
+
+
+
+        RNF allows the user to define and  use  numeric  variables.   These  are
+        handy  (and  are  used  internally)  for  keeping track of page numbers,
+        chapter numbers, header levels, etc.
+
+
+
+        4.1  VARIABLE SYNTAX
+
+
+        Variables are words which begin with a dollar sign ($), followed by from
+        1 to 9 letters, numbers, or $ characters.  The case of variable names is
+        not significant, e.g., $HILO and $hilo are the same variable.
+
+        The first character after the leading $ cannot be a number.  This is  so
+        character  combinations  of  the  forms  $<blank> and $<numbers> are not
+        recognized as variables, making a nuisance for the user.
+
+        Users should not declare variables with two  leading  dollar  signs,  as
+        this is the format used by pre-declared RNF system variables.
+
+        For example, the following are valid variable names:
+
+                 $A
+
+                 $VARIABLE
+
+                 $n$
+
+                 $L23
+
+        while the following are invalid:
+
+
+                 $100
+
+                 $
+
+1
+
+
+        24                         RNF                          Variables
+
+
+        4.2  HOW TO DECLARE VARIABLES
+
+
+        Variables are declared by the .VAR command, which has the format:
+
+                 .VAR $name
+
+        Note that the variable name is both declared and used with a leading $.
+
+        The effect of .VAR is to allocate space for a numeric variable, give  it
+        the name specified, and initialize the variable to zero.
+
+        RNF provides  75  spaces  for  user-defined  variables  in  addition  to
+        predefined variables.
+
+
+
+        4.3  PREDEFINED VARIABLES
+
+
+        As a convenience to the  user,  Rnf  makes  use  of  several  predefined
+        variables  while  performing various commands.  The predefined variables
+        are:
+
+             $$PAGE Current page number.
+             $$CH Current chapter number.
+             $$HL Current  header  level.   Also  defined  are  $$HL[1]  through
+                         $$HL[5],  which  contain  the  current  counts  at each
+                         level.
+             $$LIST Current list level.   Also  defined  are  $$LIST[1]  through
+                         $$LIST[10],  which  contain  the current counts at each
+                         level.
+             $$LM Current left margin, set by .LM.
+             $$RM Current right margin, set by .RM.
+             $$SP Current spacing, set by .SP.
+             $$NMP Page numbering flag, set by .NMP.
+
+        The values of the predefined variables may be examined or changed by the
+        user  at  any  time.   (Of course, changing these values will affect the
+        operation of the built in RNF features which use them.)
+
+
+
+        4.4  VARIABLE ARRAYS
+
+
+        Arrays may be declared by the .ARRAY command, which has the format:
+
+                 .ARRAY $name n
+
+        The effect of this declaration is that $name is declared to  be  an  n+1
+        element array, which may be referenced as $name[0] through $name[n].
+1
+
+
+        Variables                  RNF                                 25
+
+
+        The subscript may be omitted if the zeroeth  element  of  the  array  is
+        being  referenced.   That  is,  $name[0] and $name are equivalent.  This
+        convention is adopted so that a single declaration can allocate both  an
+        n-element  array  and an index variable associated with the array.  (The
+        predeclared arrays $$HL and $$LIST are used in this fashion.)
+
+        Note that the array declaration requires n+1 spaces of the  allowed  for
+        user variables.
+
+
+
+        4.5  EXPRESSIONS
+
+
+        An extremely useful feature of RNF is the ability to combine  variables,
+        numbers,  and  operators into expressions which compute a numeric value.
+        The values computed by the expressions can  in  turn  index  arrays,  be
+        assigned to variables, or become a part of the output text.
+
+
+
+        4.5.1  Expression Syntax
+
+
+        An expression is defined as follows:
+
+                 expr      ::= term < relop term >
+
+                 relop     ::= .EQ. × .NE. × .LT. × .LE. × .GT. × .GE.
+
+                 term      ::= item < < + × - > item >...
+
+                 item      ::= < + × - × # > element
+
+                 element   ::= ( term) × var × integer
+
+                 var       ::= $id < [ term ] > < = term >
+
+
+        The angle brackets < and > in the syntax  expressions  enclose  optional
+        parts.  The construction
+
+                 < stuff >...
+
+
+        indicates that stuff is allowed to appear zero or more times.  Note that
+        angle  brackets  are used to describe expressions; they do not appear in
+        expressions.
+
+        The # character in an expression represents  a  logical  NOT  operation.
+        The  expression  #x  has  the value 1 if x equals , otherwise it has the
+        value 0.
+1
+
+
+        26                         RNF                          Variables
+
+
+        The blanks in the syntax expressions are not  significant  and  in  fact
+        blanks  are  not permitted in expressions.  That is, and expression must
+        be a single word.
+
+        Some examples of valid expressions are:
+
+                 $A.GR.5
+
+                 $HL[$HL+1]=0
+
+                 2+$$PAGE
+
+                 $X[$X=$X+1]=$X[$X]+1
+
+                 $A=$B=$C
+
+
+
+
+        4.5.2  Expression Evaluation
+
+
+        Expressions are evaluated from left to right,  except  that  assignments
+        (indicated by the = sign) at the same level are done from right to left.
+
+        In the examples above, $X[$X=$X+1]=$X[$X]+1 is equivalent to the  series
+        of  expressions  $X=$X+1  $X[$X]=$X[$X]+1.   (Recall  that  the  zeroeth
+        element of an array can be referenced without subscripts.)  On the other
+        hand, the expression $A=$B=$C is equivalent to $B=$C $A=$B.
+
+
+
+        4.5.3  Where Expressions Are Used
+
+
+        An expression can always be used as  an  argument  to  a  command  which
+        requires a numeric value.
+
+        An expression can also appear in text.  RNF decides whether to  evaluate
+        an  expression  in text or not based on whether the first character is a
+        $.  If it is, RNF evaluates the expression; otherwise the expression  is
+        treated like any other text word.
+
+        For example, the expression $A+2 will be evaluated, while 2+$A will not.
+        If  $A  has  the  value  3, the former will appear in the output as "5",
+        while the latter will appear as "2+$A".
+
+        For the few cases when it is not convenient to begin an expression to be
+        evaluated with a variable name, the syntax:
+
+                 $(expr)
+
+1
+
+
+        Variables                  RNF                                 27
+
+
+        will cause expr to be evaluated.
+
+
+
+        4.5.4  Suppressed Expressions
+
+
+        Frequently, one wishes to compute a value and assign it to a variable --
+        that  is,  evaluate  an expression -- without placing anything at all in
+        the output text.  This is done by  terminating  the  expression  with  a
+        semicolon.
+
+        For example, the words:
+
+
+                          .VAR $A See $A=$A+1; only $A of these.
+
+                 are output as
+
+                          See only 1 of these.
+
+1
+
+
+        28                         RNF                          Variables
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                              This page intentionally left blank.
++                             ____ ____ _____________ ____ ______
+1
+
+
+        Examples                   RNF                                 29
+
+
+
+
+
+
+
+                                       CHAPTER 5
+
+                                       EXAMPLES
+
+
+
+
+        This chapter contains a number of short examples  demonstrating  various
+        frequently used RNF features.
+
+        The examples are intended  to  be  self-explanatory  and  are  presented
+        without  accompanying text.  All but one of the examples was prepared in
+        NORMAL mode (RNF default input).
+1
+
+
+        30                         RNF                           Examples
+
+
+        5.1  INPUT TEXT EXAMPLE
+
+        .C <RNO
+        .C ^INPUT ^TEXT
+
+        ^INPUT TEXT TO <RNO CONSISTS OF A SEQUENCE OF WORDS AND COMMANDS
+        SEPARATED BY BLANKS.  ^A COMMAND IS ANY WORD WHICH BEGINS WITH
+        A PERIOD FOLLOWED BY A NON-DIGIT, WHILE A WORD IS ANY
+        SEQUENCE OF CHARACTERS WHICH
+        DOES NOT CONTAIN A BLANK.  ^THE FOLLOWING ARE CONSIDERED WORDS:
+
+        .I 5 ^THIS
+        .BR .I 5 .^B
+        .BR .I 5 ^W^O^RD#^W^I^T^H#^S^I^G^N^I^F^I^C^A^N^T#^B^L^
+        .BR .I 5 .234
+        .B ^OF THE ABOVE WORDS, ONLY .^B IS A COMMAND.
+        .B <RNO GATHERS WORDS INTO LINES.  ^BY DEFAULT, THE FIRST WORD IN
+        A LINE BEGINS AT THE LEFT MARGIN, AND THE LAST WORD ENDS AT
+        OR BEFORE THE RIGHT MARGIN.  ^THAT IS, LINES ARE LEFT JUSTIFIED.
+
+        ^IN THE OUTPUT,
+        AT LEAST ONE BLANK APPEARS BETWEEN WORDS; TWO BLANKS FOLLOW A
+        PERIOD OR QUESTION MARK WHICH END A WORD.
+1
+
+
+        Examples                   RNF                                 31
+
+
+                                          RNO
+                                      Input Text
+
+        Input text to RNO consists of a sequence of words and commands separated
+        by blanks.  A command is any word which begins with a period followed by
+        a non-digit, while a word is any sequence of characters which  does  not
+        contain a blank.  The following are considered words:
+
+     This
+     .B
+     WORD#WITH#SIGNIFICANT#BLANKS
+     .234
+
+        Of the above words, only .B is a command.
+
+        RNO  gathers  words  into  lines.   By default, the first word in a line
+        begins at the left margin, and the last word ends at or before the right
+        margin.  That is, lines are left justified.
+
+        In the output, at least one blank  appears  between  words;  two  blanks
+        follow a period or question mark which end a word.
+1
+
+
+        32                         RNF                           Examples
+
+
+        5.2  PARAGRAPHING
+
+        .C ^PARAGRAPHING
+        .P +5 1 5
+        .PP ^THE PARAGRAPHING FACILITY IN <RNO ENABLES FAST, CONVENIENT
+        TEXT ENTRY IN A NATURAL FORMAT.
+        .PP ^PARAGRAPHING IS SET UP BY THE .<P COMMAND, WHICH HAS THE
+        FORMAT:
+        .B .I 9 .<P INDENT SPACING TEST
+        .PP ^INDENT IS THE COLUMN AT WHICH THE FIRST LINE OF EACH
+        PARAGRAPH IS TO BEGIN, SPECIFIED EITHER AS AN UNSIGNED COLUMN
+        NUMBER OR AS A POSITIVE OR NEGATIVE OFFSET FROM THE CURRENT
+        LEFT MARGIN.  ^SPACING SPECIFIES THE NUMBER OF SPACES BETWEEN
+        PARAGRAPHS, WHERE 1 IS THE EQUIVALENT OF A <.S 1 COMMAND,
+        IS THE EQUIVALENT OF A <.S2 COMMAND, ETC.  ^TEST
+        SPECIFIES THE NUMBER OF LINES WHICH
+        MUST REMAIN ON THE CURRENT PAGE, OR THE PARAGRAPH IS BEGUN
+        ON THE NEXT PAGE.
+        .PP ^THE DEFAULT IS:
+        .B .I 9 .<P +0 1 3
+        .PP ^THE .<PP COMMAND DENOTES THE BEGINNING OF A NEW PARAGRAPH.
+        .AP
+         ^AS AN ALTERNATIVE (OR IN ADDITION) TO THE <.PP COMMAND, THE USER
+        CAN SELECT AUTOPARAGRAPH MODE BY MEANS OF THE <.AP COMMAND.
+        ^IF <.AP IS IN EFFECT, A BLANK AT THE BEGINNING OF ANY LINE
+        (OR A BLANK LINE)
+        IS TAKEN TO BE A <.PP COMMAND.
+
+        (^NOTE THAT A BLANK LINE IN <.NOAP MODE IS TAKEN TO BE A <.B
+        COMMAND.)
+
+        ^THE AUTOPARAGRAPH CONVENTIONS ALLOW A TYPIST TO ENTER AND WORK
+        WITH ALL TEXT IN A READABLE FORMAT WHICH IS CONVENIENT FOR
+        COMPUTER EDITING (FOR EXAMPLE, SINGLE SPACED WITH SINGLE CHARACTER
+        INDENTS), YET PRODUCE THE DRAFT AND FINAL COPIES OF WORK
+        IN WHATEVER STYLE IS REQUIRED.
+1
+
+
+        Examples                   RNF                                 33
+
+
+                                     Paragraphing
+
+             The paragraphing facility in  RNO  enables  fast,  convenient  text
+        entry in a natural format.
+
+             Paragraphing is set up by the .P command, which has the format:
+
+         .P indent spacing test
+
+             Indent is the column at which the first line of each  paragraph  is
+        to begin, specified either as an unsigned column number or as a positive
+        or negative offset from the current left margin.  Spacing specifies  the
+        number of spaces between paragraphs, where 1 is the equivalent of a .S 1
+        command, is the equivalent of a .S2 command, etc.   Test  specifies  the
+        number  of lines which must remain on the current page, or the paragraph
+        is begun on the next page.
+
+             The default is:
+
+         .P +0 1 3
+
+             The .PP command denotes the beginning of a new paragraph.
+
+             As an alternative (or in addition) to the .PP command, the user can
+        select  autoparagraph  mode  by  means of the .AP command.  If .AP is in
+        effect, a blank at the beginning of any line (or a blank line) is  taken
+        to be a .PP command.
+
+             (Note that a blank line in .NOAP mode is taken to be a .B command.)
+
+             The autoparagraph conventions allow a typist to enter and work with
+        all  text  in a readable format which is convenient for computer editing
+        (for example, single spaced with single character indents), yet  produce
+        the draft and final copies of work in whatever style is required.
+1
+
+
+        34                         RNF                           Examples
+
+
+        5.3  HEADER LEVEL EXAMPLES
+
+        .AP
+        .HL 2 <HOW <TO <USE <HEADER <LEVELS
+         ^THE .<HL COMMAND ENABLES THE TYPIST TO ORGANIZE TEXT INTO
+        SECTIONS, AND SECTIONS WITHIN SECTIONS, WITH SEQUENTIAL NUMBERS
+        WHICH ARE CHANGED BY THE COMPUTER IF SECTIONS ARE ADDED OR
+        DELETED.
+        .HL 3 ^FORMAT
+         ^THE FORMAT OF THE .<HL COMMAND IS:
+        .S 1 .I 9 .<HL NUMBER TEXT
+         ^THE NUMBER IS THE LEVEL NUMBER, WHERE 1 IS THE OUTERMOST
+        LEVEL, 2 IS THE NEXT INNER LEVEL, ETC.  ^THE TEXT IS THE
+        TITLE OF THE SECTION.
+        .HL 3 ^EFFECT OF THE ^COMMAND
+         ^THE .<HL COMMAND STARTS A SECTION AT THE LEVEL SPECIFIED AND
+        USES TEXT AS THE HEADER.  ^THE NUMBER CAN BE IN THE RANGE
+        FROM 1 TO 5. ^THE SECTION NUMBER OUTPUT IS IN THE FORM
+        I.J.K.L.M.  ^IF THE DOCUMENT IS CHAPTER ORIENTED, I IS THE
+        CHAPTER NUMBER; OTHERWISE IT IS THE NUMBER OF .<HL 1 COMMANDS
+        SINCE THE BEGINNING OF THE INPUT TEXT.
+         ^THE COMMAND DOES A RETURN, A TEST PAGE 9, AND PRECEDES THE
+        SECTION IDENTIFIER WITH 3 BLANK LINES.
+        ^THE MARGINS AND OTHER ENVIRONMENT ARE RESET TO THE VALUES
+        THEY HAD BEFORE THE FIRST .<HL COMMAND (IN THE CHAPTER).
+        ^THE SECTION NUMBER BEGINS AT THE LEFT MARGIN, FOLLOWED
+        BY TWO SPACES, FOLLOWED BY THE TEXT, IF ANY.
+         ^A SINGLE BLANK LINE IS INSERTED AFTER THE HEADER.
+        .HL 2 <INCREMENTING
+         ^SECTION NUMBERS ARE INCREMENTED BY 1 AT THE LEVEL OF THE
+        CURRENT .<HL COMMAND.
+         ^EACH TIME LEVELS ARE NESTED (FOR EXAMPLE, .<HL 1 FOLLOWED
+        BY .<HL 2), THE NUMBERING IS RESTARTED AT 1 FOR THE HIGHER
+        NUMBERED LEVEL.
+1
+
+
+        Examples                   RNF                                 35
+
+
+        5.3.1  HOW TO USE HEADER LEVELS
+
+
+        The .HL command enables the typist to organize text into  sections,  and
+        sections  within  sections, with sequential numbers which are changed by
+        the computer if sections are added or deleted.
+
+
+
+        5.3.1.1  Format
+
+
+        The format of the .HL command is:
+
+         .HL number text
+
+        The number is the level number, where 1 is the outermost level, 2 is the
+        next inner level, etc.  The text is the title of the section.
+
+
+
+        5.3.1.2  Effect of the Command
+
+
+        The .HL command starts a section at the level specified and uses text as
+        the  header.   The  number can be in the range from 1 to 5.  The section
+        number output is in the form i.j.k.l.m.   If  the  document  is  chapter
+        oriented,  i  is the chapter number; otherwise it is the number of .HL 1
+        commands since the beginning of the input text.
+
+        The command does a return, a test  page  9,  and  precedes  the  section
+        identifier  with  3  blank lines.  The margins and other environment are
+        reset to the values they had  before  the  first  .HL  command  (in  the
+        chapter).  The section number begins at the left margin, followed by two
+        spaces, followed by the text, if any.
+
+        A single blank line is inserted after the header.
+
+
+
+        5.3.2  INCREMENTING
+
+
+        Section numbers are incremented by 1 at the level  of  the  current  .HL
+        command.
+
+        Each time levels are nested (for example, .HL 1 followed by .HL 2),  the
+        numbering is restarted at 1 for the higher numbered level.
+1
+
+
+        36                         RNF                           Examples
+
+
+        5.4  EXAMPLES of LISTS
+
+        .C ^USING ^LISTS
+        .AP
+         ^AUTOMATICALLY NUMBERED LISTS CAN BE GENERATED BY THE <.LIST,
+        <.LE, AND <.ELIST COMMANDS.  ^THE <.LIST COMMAND HAS THE FORMAT:
+         .I 9 <.LIST SPACING
+         WHERE SPACING IS A NUMBER IN THE RANGE 1 THROUGH 5 WHICH
+        SPECIFIES THE SPACING TO BE USED WITHIN THE LIST.
+         ^THE LIST IS GENERATED AS FOLLOWS:
+        .LIST 1
+        .LE ^EACH LIST ELEMENT IS PRECEDED BY THE <.LE COMMAND.
+        .LE ^LIST ELEMENTS ARE SEPARATED BY "SPACING" BLANK LINES.
+        .LE ^EACH ELEMENT IS AUTOMATICALLY NUMBERED BEGINNING AT
+        BY 1.
+        .LE ^THE LIST IS TERMINATED BY THE <.ELIST COMMAND (WHICH
+        ALSO RESETS THE MARGINS AND SPACING).
+        .LE ^LISTS CAN BE NESTED WITHIN LISTS.  ^THIS IS HANDLED
+        AS FOLLOWS:
+        .LIST 1
+        .LE ^THE LEFT MARGIN IS SET 9 COLUMNS TO THE RIGHT FOR
+        THE OUTERMOST LIST, AND 4 COLUMNS TO THE RIGHT FOR EACH
+        INNER LIST.
+        .LE ^EACH <.LIST MUST BE TERMINATED BY A MATCHING <.ELIST.
+        ^THE <.ELIST RESETS THE MARGINS AND SPACING AS THEY WERE
+        BEFORE THE <.LIST COMMAND.
+        .LE ^FOR USERS OF AUTOPARAGRAPHING, THE PARAGRAPH MARGIN
+        IS SET TO COINCIDE WITH THE LEFT MARGIN, AND PARAGRAPH
+        SPACING IS SET TO THE LIST SPACING PLUS 1.
+         ^THIS MEANS THAT AUTOPARAGRAPHING CAN BE CONVENIENTLY
+        USED AT ANY LIST LEVEL.
+         ^THE PARAGRAPH VALUES ARE RESET BY THE <.ELIST COMMAND.
+        .ELIST
+        .LE ^LISTS CAN BE NESTED UP TO 5 LEVELS.
+        .ELIST
+         ^THE LIST FACILITY CAN BE A SIGNIFICANT CONVENIENCE FOR
+        THE TYPIST.
+1
+
+
+        Examples                   RNF                                 37
+
+
+                                      Using Lists
+
+        Automatically numbered lists can be generated by  the  .LIST,  .LE,  and
+        .ELIST commands.  The .LIST command has the format:
+
+         .LIST spacing
+
+        where spacing is a number in the range 1 through 5 which  specifies  the
+        spacing to be used within the list.
+
+        The list is generated as follows:
+
+             1.  Each list element is preceded by the .LE command.
+
+             2.  List elements are separated by "spacing" blank lines.
+
+             3.  Each element is automatically numbered beginning at by 1.
+
+             4.  The list is terminated by the .ELIST command (which also resets
+                 the margins and spacing).
+
+             5.  Lists can be nested within lists.  This is handled as follows:
+
+                 1.  The  left  margin  is  set  9  columns to the right for the
+                     outermost list, and 4 columns to the right for  each  inner
+                     list.
+
+                 2.  Each .LIST must be terminated by a  matching  .ELIST.   The
+                     .ELIST  resets  the margins and spacing as they were before
+                     the .LIST command.
+
+                 3.  For  users of autoparagraphing, the paragraph margin is set
+                     to coincide with the left margin, and paragraph spacing  is
+                     set to the list spacing plus 1.
+
+
+                     This means that autoparagraphing can be  conveniently  used
+                     at any list level.
+
+
+                     The paragraph values are reset by the .ELIST command.
+
+             6.  Lists can be nested up to 5 levels.
+
+        The list facility can be a significant convenience for the typist.
+1
+
+
+        38                         RNF                           Examples
+
+
+        5.5  CHANGE BAR EXAMPLES
+
+        .BAR .AP
+        .C ^USING ^CHANGE ^BARS
+        .B
+         ^CHANGE BARS ARE USED TO FLAG TEXT WHICH HAS BEEN
+        ALTERED SINCE THE LAST VERSION OF A DOCUMENT, AND ARE
+        COMMONLY FOUND ONLY IN TECHNICAL WRITING,
+        .BB WHERE THE READER MUST BE ALTERTED TO NEW FEATURES. .EB
+         ^THE <.BAR COMMAND ENABLES CHANGE BARS, AND HAS THE IMMEDIATE
+        EFFECT OF SHIFTING ALL OUTPUT TEXT RIGHT
+        .BB THREE .EB
+        SPACES.
+        ^THE <.NOBAR COMMAND DISABLES CHANGE BARS.  ^USUALLY, THE .BAR COMMAND
+        APPEARS BEFORE ANY TEXT IN A DOCUMENT, SO THE LEFT MARGIN IN THE OUTPUT
+        IS UNIFORM.
+         ^THE <.BB (^BEGIN ^BAR) COMMAND TURNS ON CHANGE BARS.  ^THAT IS,
+        <.BB CAUSES A ! TO APPEAR AT THE LEFT MARGIN FOR ANY LINES WHICH
+        ARE OUTPUT AFTER THE <.BB
+        .BB (INCLUDING BLANK LINES WHICH ARE A PART OF THE TEXT). .EB
+         ^THE <.EB (^END ^BAR) COMMAND SIGNIFIES THE END OF THE CHANGE
+        BEGUN BY <.BB, AND TURNS OFF CHANGE BARS.
+         .BB ^SPACES CAUSED BY THE <.RIGHT COMMAND APPEAR TO THE LEFT OF
+        THE THREE EXTRA COLUMNS USED BY THE <.BAR FEATURE.
+         ^BLANK LINES WHICH APPEAR AS A PART OF CHANGED TEXT ARE
+        ALSO FLAGGED BY A BAR.
+1
+
+
+        Examples                   RNF                                 39
+
+
+ ×                                    Using Change Bars
+ ×
+ ×
+ ×         Change bars are used to flag text which has been altered since the  l
+ ×         version of a document, and are commonly found only in technical writi
+ ×         where the reader must be alterted to new features.
+
+           The .BAR command enables change bars, and has the  immediate  effect
+ ×         shifting  all  output  text  right  three  spaces.   The  .NOBAR comm
+           disables change bars.  Usually, the command appears before any text i
+           document, so the left margin in the output is uniform.
+
+           The .BB (Begin Bar) command turns on change bars.  That is, .BB cause
+           !  to appear at the left margin for any lines which are output after
+ ×         .BB (including blank lines which are a part of the text).
+
+           The .EB (End Bar) command signifies the end of the change begun by  .
+           and turns off change bars.
+
+ ×         Spaces caused by the .RIGHT command appear to  the  left  of  the  th
+ ×         extra columns used by the .BAR feature.
+ ×
+ ×         Blank lines which appear as a part of changed text are also flagged b
+ ×         bar.
+1
+
+
+        40                         RNF                           Examples
+
+
+        5.6  TAB EXAMPLES
+
+        .ASCII
+        .c Using <rno Tabs
+        .ap
+         <rno tab stops are set by the <.tabs command.  The format is:
+         .i 9 <.tabs c1 c2 <... c15
+         where c1 through c15 are character positions, in ascending order,
+        where the tab stops are to be set.
+        (Character positions are numbered beginning at 1). To work
+        correctly, tab stops must not be set beyond the right margin.
+         Tabs are used by the <.t command, which means "begin the next
+        word at the next tab stop".
+         For example, the following
+         .i 9 <.tabs 10 20 30 40
+        .br .i 9 Line <.t this <.t up <.t in <.t columns
+         produces
+        .tabs 19 29 39 49
+         .i 9 Line .t this .t up .t in .t columns
+         The following features should be noted:
+        .tab 30 .p -21 2 5 .lm 30
+         Justification .t Having tabs in a line does not suppress
+        justification.  Only the text after the last tab in a line is blank
+        padded.  This permits convenient use of "hanging" titles and
+        indentation.
+         Left/Right .t Tabs produced by <.t cause the following
+        word to begin at the next tab stop.  The <.rt
+        command causes the following word to end at the
+        next tab stop.  This permits creating tables of numeric
+        data.
+1
+
+
+        Examples                   RNF                                 41
+
+
+                                    Using RNO Tabs
+
+        RNO tab stops are set by the .TABS command.  The format is:
+
+         .TABS c1 c2 ...  c15
+
+        where c1 through c15 are character positions, in ascending order,  where
+        the  tab  stops  are  to  be  set.   (Character  positions  are numbered
+        beginning at 1).  To work correctly, tab stops must not  be  set  beyond
+        the right margin.
+
+        Tabs are used by the .T command, which means "begin the next word at the
+        next tab stop".
+
+        For example, the following
+
+         .TABS 10 20 30 40
+         Line .T this .T up .T in .T columns
+
+        produces
+
+         Line      this      up        in        columns
+
+        The following features should be noted:
+
+         Justification        Having  tabs  in  a   line   does   not   suppress
+                              justification.   Only  the text after the last tab
+                              in  a  line  is  blank   padded.    This   permits
+                              convenient    use    of   "hanging"   titles   and
+                              indentation.
+
+         Left/Right           Tabs produced by .T cause the  following  word  to
+                              begin  at  the  next  tab  stop.   The .RT command
+                              causes the following word to end at the  next  tab
+                              stop.   This  permits  creating  tables of numeric
+                              data.
+1
+
+
+        42                         RNF                           Examples
+
+
+        5.7  MACRO EXAMPLES
+
+        .MACRO BBCB 1 = .B .B .C .BBCB1 .B
+        .MACRO NOTE * = .SAV .TP 8 .SP 1 .LM +15 .RM -15 .P +0 1 5 .BBCB .NOTE1
+        .MACRO ENOTE = .B .B .RES
+        .AP
+        .C ^THE <NOTE ^COMMAND
+         ^THIS EXAMPLE SHOWS THE DEFINITION OF A USEFUL COMMAND VIA THE <.MACRO
+        FACILITY.
+        .NOTE ^WARNING
+        ^THIS COMMAND CAN BE HABIT-FORMING.  ^USE IT SPARINGLY.
+        .ENOTE
+        ^TRY IT, YOU'LL LIKE IT!
+1
+
+
+        Examples                   RNF                                 43
+
+
+                                   The NOTE Command
+
+        This example shows the definition of a useful  command  via  the  .MACRO
+        facility.
+
+
+                                        Warning
+
+                       This command can be habit-forming.  Use it
+                       sparingly.
+
+
+        Try it, you'll like it!
+1
+
+
+        44                         RNF                     How To Run RNF
+
+
+
+
+
+
+
+                                       CHAPTER 6
+
+                                    HOW TO RUN RNF
+
+
+
+        This is implementation dependent information!
+
+        The following jcl may be used to run RNF:
+
+        //RNF EXEC PGM=RUNOFF,REGION=90K,PARM='/IOBUF=16K',TIME=(2,00)
+        //OUTPUT DD SYSOUT=(G,,0721),DCB=(LRECL=133,BLKSIZE=133,RECFM=FBA)
+        //QRR DD SYSOUT=A,DCB=(LRECL=90,BLKSIZE=90,RECFM=FB)
+        //INPUT DD *
+           runoff text
+        /*
+
+
+        NOTES:
+
+        If  you  do not wish to see the input printed, specify DUMMY, instead of
+        SYSOUT=A on the QRR DD card.
+
+        Adjust  REGION=90K  if BLKSIZE parameters are too large, but this should
+        be sufficient for the normal case.
+
+        Be sure to specify the proper OUTPUT DD sysout class and form.
+
+        Be sure to specify the correct library in the //STEPLIB or  //JOBLIB  DD
+        card.
+1
+
+
+
+
+
+
+
+
+
+                                   TABLE OF CONTENTS
++                                  _____ __ ________
+
+
+             Section     Title and Page
++            _______     _____ ___ ____
+
+                         CHAPTER 1 -- INTRODUCTION   1
+             .1           FEATURES  1
+             .2           INPUT TEXT  2
+             .2.1         NORMAL Input  2
+             .2.2         ASCII Input  2
+             .3           WORDS  3
+             .4           LINES  3
+             .5           SPACING  4
+             .6           PARAGRAPHS  4
+             .7           PAGES  5
+             .7.1         Explicit Paging Control  5
+             .7.2         Page Format  5
+
+             2           CHAPTER 2 -- COMMANDS   7
+                          .AP  7
+                          .ARRAY  7
+                          .ASCII  8
+                          .ASIS  8
+                          .ATITLE  8
+                          .AUTOCAP  8
+                          .B  8
+                          .BAR  9
+                          .BB  9
+                          .BOT  9
+                          .BR  9
+                          .C  9
+                          .CH  9
+                          .CR  10
+                          .DEBUG1  10
+                          .DEBUG2  10
+                          .DEC  10
+                          .DELMAC  10
+                          .DOT  10
+                          .EB  10
+                          .ELIST  10
+                          .ESC  11
+                          .F  11
+                          .FIG  11
+                          .FLAG  11
+                          .FLAGCAPS  11
+
+
+
+
+
+                                           i
+1
+
+
+
+
+
+
+
+
+
+                             TABLE OF CONTENTS (Continued)
++                            _____ __ ________ ___________
+
+
+             Section     Title and Page
++            _______     _____ ___ ____
+
+                          .FLAGOVER  11
+                          .FLAGSIG  12
+                          .FRCPAGE  12
+                          .FMT  12
+                          .HL  13
+                          .I  13
+                          .IF  13
+                          .INC  13
+                          .J  14
+                          .LE  14
+                          .LINES  14
+                          .LIST  14
+                          .LPT  14
+                          .LM  14
+                          .LOWER  14
+                          .MACRO  14
+                          .MID  15
+                          .NMP  15
+                          .P  15
+                          .PAGE  15
+                          .PERIOD  15
+                          .PNO  16
+                          .PP  16
+                          .PS  16
+                          .REM  16
+                          .RES  16
+                          .RESPAG  16
+                          .RIGHT  16
+                          .RM  16
+                          .RT  17
+                          .S  17
+                          .SAV  17
+                          .SAVPAG  17
+                          .SIG  17
+                          .SP  17
+                          .ST  18
+                          .STD  18
+                          .SUP  18
+                          .T  18
+                          .TABS  18
+
+
+
+
+
+                                          ii
+1
+
+
+
+
+
+
+
+
+
+                             TABLE OF CONTENTS (Continued)
++                            _____ __ ________ ___________
+
+
+             Section     Title and Page
++            _______     _____ ___ ____
+
+                          .TITLE  18
+                          .TOP  18
+                          .TP  18
+                          .U  19
+                          .UPP  19
+                          .UPPER  19
+                          .USB  19
+                          .VAR  19
+                          .X  19
+
+             3           CHAPTER 3 -- MACROS   21
+             .1           WHAT MACROS ARE  21
+             .2           HOW TO DEFINE A MACRO  22
+             .3           SUB-MACROS  22
+             .3.1         Defining Parameterized Macros  23
+             .3.2         Sub-macro Semantics  23
+
+             4           CHAPTER 4 -- VARIABLES   24
+             .1           VARIABLE SYNTAX  24
+             .2           HOW TO DECLARE VARIABLES  25
+             .3           PREDEFINED VARIABLES  25
+             .4           VARIABLE ARRAYS  25
+             .5           EXPRESSIONS  26
+             .5.1         Expression Syntax  26
+             .5.2         Expression Evaluation  27
+             .5.3         Where Expressions Are Used  27
+             .5.4         Suppressed Expressions  28
+
+             5           CHAPTER 5 -- EXAMPLES   30
+             .1           INPUT TEXT EXAMPLE  31
+             .2           PARAGRAPHING  33
+             .3           HEADER LEVEL EXAMPLES  35
+             .4           EXAMPLES OF LISTS  37
+             .5           CHANGE BAR EXAMPLES  39
+             .6           TAB EXAMPLES  41
+             .7           MACRO EXAMPLES  43
+
+             6           CHAPTER 6 -- HOW TO RUN RNF   45
+
+
+
+
+
+
+
+                                          iii
+1
